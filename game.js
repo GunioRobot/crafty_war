@@ -2,8 +2,7 @@ $(document).ready(function() {
     Crafty.init();
 	Crafty.background("black");
     Crafty.sprite(128, "images/sprite.png", {
-        grass: [0,0,1,1],
-        stone: [1,0,1,1]
+        system: [0,0,1,1]
     });
 
     iso = Crafty.isometric.init(128);
@@ -11,32 +10,21 @@ $(document).ready(function() {
     var map_height = 10;
     var map_width = 6;
 
-    for(var i = (map_width-1); i >= 0; i--) {
-        for(var y = 0; y < map_height; y++) {
-            var which = Crafty.randRange(0,1);
-            var tile = Crafty.e("2D, DOM, "+ (!which ? "grass" : "stone") +", Mouse")
-            .attr('z',i+1 * y+1).areaMap([64,0],[128,32],[128,96],[64,128],[0,96],[0,32]).bind("click", function(e) {
-                //destroy on right click
-                if(e.button === 2) this.destroy();
-            }).bind("mouseover", function() {
-                if(this.has("grass")) {
-                    this.sprite(0,1,1,1);
-                } else {
-                    this.sprite(1,1,1,1);
-                }
-            }).bind("mouseout", function() {
-                if(this.has("grass")) {
-                    this.sprite(0,0,1,1);
-                } else {
-                    this.sprite(1,0,1,1);
-                }
-            });
-            
-            iso.place(i,y,0,tile);
+	systems = { 
+		alpha: [4,3],
+		beta: [6,6],
+		delta: [3,2],
+		gamma: [4,4]
+	};
+	
+	for (system in systems)
+	{
+		var tile = Crafty.e("2D, DOM, system, Mouse");
+		console.log("test " + systems[system][0] + "," + systems[system][0]);
+		
+		iso.place(systems[system][0],systems[system][1],0,tile);
+	}
 
-        }
-    }
-    
     Crafty.addEvent(this, Crafty.stage.elem, "mousedown", function(e) {
         if(e.button > 1) return;
         var base = {x: e.clientX, y: e.clientY};
