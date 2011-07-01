@@ -1,3 +1,32 @@
+
+function Point()
+{
+    this.x = 0;
+    this.y = 0;
+}
+
+function System()
+{
+    this.position = new Point();
+    this.name = "";
+}
+
+function CreateSystems(system_data)
+{
+    var systems = {};
+    
+    for(system_name in system_data)
+    {
+        systems[system_name] = new System();
+        
+        systems[system_name].position.x = system_data[system_name].x;
+        systems[system_name].position.y = system_data[system_name].y;
+    }
+    
+    return systems;
+}
+
+
 $(document).ready(function() {
     Crafty.init();
 	Crafty.background("black");
@@ -10,19 +39,22 @@ $(document).ready(function() {
     var map_height = 10;
     var map_width = 6;
 
-	systems = { 
-		alpha: [4,3],
-		beta: [6,6],
-		delta: [3,2],
-		gamma: [4,4]
-	};
-	
-	for (system in systems)
+	var system_data = 
+        {
+            "alpha" : { "x": 4, "y": 3 },
+            "beta" : { "x": 6, "y": 6 },
+            "gamma" : { "x": 3, "y": 2 },
+            "delta" : { "x": 4, "y": 4 }
+        };
+    
+
+    systems = CreateSystems(system_data);
+
+	for (k in systems)
 	{
 		var tile = Crafty.e("2D, DOM, system, Mouse");
-		console.log("test " + systems[system][0] + "," + systems[system][0]);
 		
-		iso.place(systems[system][0],systems[system][1],0,tile);
+		iso.place(systems[k].position.x,systems[k].position.y,0,tile);
 	}
 
     Crafty.addEvent(this, Crafty.stage.elem, "mousedown", function(e) {
@@ -35,7 +67,7 @@ $(document).ready(function() {
                 base = {x: e.clientX, y: e.clientY};
             Crafty.viewport.x -= dx;
             Crafty.viewport.y -= dy;
-        };
+        }
 
         Crafty.addEvent(this, Crafty.stage.elem, "mousemove", scroll);
         Crafty.addEvent(this, Crafty.stage.elem, "mouseup", function() {
