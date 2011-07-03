@@ -27,8 +27,31 @@ function CreateSystems(system_data)
 }
 
 
+function PointToPixel(point)
+{
+    var x = point.x * 128;
+    var y = point.y * (128/2);
+    
+    return [x,y];
+}
+
+function DrawRoute(point_from, point_to)
+{
+    var start_point = PointToPixel(point_from);
+    var end_point = PointToPixel(point_to);
+    
+    var context = Crafty.canvas.context;
+    
+    context.moveTo(start_point);
+    context.lineTo(end_point);
+    context.strokeStyle = "#FFF";
+    context.stroke();
+    console.log("draw!");
+}
+
 $(document).ready(function() {
     Crafty.init();
+    
 	Crafty.background("black");
     Crafty.sprite(128, "images/sprite.png", {
         system: [0,0,1,1]
@@ -47,14 +70,24 @@ $(document).ready(function() {
             "delta" : { "x": 4, "y": 4 }
         };
     
-
+    routes = {};
     systems = CreateSystems(system_data);
 
-	for (k in systems)
+	for (var k in systems)
 	{
 		var tile = Crafty.e("2D, DOM, system, Mouse");
 		
 		iso.place(systems[k].position.x,systems[k].position.y,0,tile);
+        
+        for (var ok in systems)
+        {
+            if ((k != ok))
+            {
+                routes[k] = systems[ok];
+                console.log("Adding a route from " + k + " to " + ok);
+                DrawRoute(systems[k], systems[ok]);
+            }
+        }
 	}
 
     Crafty.addEvent(this, Crafty.stage.elem, "mousedown", function(e) {
